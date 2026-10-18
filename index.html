@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>60 Minutes a Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   COLOURS – change these to restyle the whole site
+   ============================================================ */
+:root {
+  color-scheme: light;
+  --page: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #17202b;
+  --ink-2: #4a5462;
+  --muted: #7a8391;
+  --line: #dde2e8;
+  --action: #1c5cab;          /* buttons and links */
+  --action-ink: #ffffff;
+  --zone-light: #eceef1;      /* light zone band */
+  --zone-mod: #dceafb;        /* moderate zone band */
+  --zone-vig: #b7d3f6;        /* vigorous zone band */
+  --dot-class: rgba(23, 32, 43, 0.42);
+  --dot-you: #eb6834;
+  --good: #006300;
+  --focus: #eb6834;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #111418;
+    --surface: #1b1f24;
+    --ink: #eef0f2;
+    --ink-2: #c3c8cf;
+    --muted: #8d95a0;
+    --line: #2e343c;
+    --action: #5598e7;
+    --action-ink: #0d1117;
+    --zone-light: #262b31;
+    --zone-mod: #1b2b40;
+    --zone-vig: #22426c;
+    --dot-class: rgba(238, 240, 242, 0.45);
+    --dot-you: #f07a4b;
+    --good: #0ca30c;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #111418; --surface: #1b1f24; --ink: #eef0f2; --ink-2: #c3c8cf; --muted: #8d95a0;
+  --line: #2e343c; --action: #5598e7; --action-ink: #0d1117; --zone-light: #262b31;
+  --zone-mod: #1b2b40; --zone-vig: #22426c; --dot-class: rgba(238,240,242,0.45);
+  --dot-you: #f07a4b; --good: #0ca30c;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 18px/1.55 "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+h1, h2, h3 {
+  font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  line-height: 1.05;
+  margin: 0 0 .4em;
+}
+h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); letter-spacing: -.01em; }
+h2 { font-size: clamp(1.8rem, 4.5vw, 2.4rem); }
+h3 { font-size: 1.35rem; font-weight: 600; }
+p { margin: 0 0 1em; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+.wrap-wide { max-width: 1240px; }
+/* big screens (smartboard / projector): use more of the width and bigger text */
+@media (min-width: 1500px) {
+  .wrap-wide { max-width: 92vw; }
+  #panel-class h2 { font-size: 3.2rem; }
+  #panel-class .lead, #panel-class .legend { font-size: 1.35rem; }
+  #panel-class .lg-class { width: 14px; height: 14px; }
+  #panel-class .lg-you { width: 16px; height: 16px; }
+  #panel-class .lg-avg { height: 22px; }
+}
+
+/* ---------- top bar with tabs ---------- */
+.topbar { position: sticky; top: 0; z-index: 5; background: var(--page); border-bottom: 1px solid var(--line); }
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; flex-wrap: wrap; }
+.brand { font: 700 1.4rem "Barlow Condensed", sans-serif; letter-spacing: .01em; }
+.tabs { display: flex; gap: 6px; }
+.tab { appearance: none; border: 0; background: transparent; color: var(--ink-2); cursor: pointer;
+  font: 700 1rem "Atkinson Hyperlegible", sans-serif; padding: 18px 14px 16px; border-bottom: 3px solid transparent; }
+.tab:hover { color: var(--ink); }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--dot-you); }
+[role="tabpanel"][hidden] { display: none; }
+.next-link { margin-top: 18px; }
+.next-link[hidden] { display: none; }
+@media (max-width: 560px) {
+  .topbar-inner { min-height: 0; padding-top: 10px; }
+  .brand { font-size: 1.2rem; }
+  .tabs { width: 100%; }
+  .tab { flex: 1; padding: 12px 8px; }
+}
+section { padding: 40px 0; border-top: 1px solid var(--line); }
+section:first-of-type { border-top: 0; }
+.lead { font-size: 1.15rem; color: var(--ink-2); max-width: 62ch; }
+.step-no {
+  display: inline-grid; place-items: center;
+  width: 2.1rem; height: 2.1rem; border-radius: 50%;
+  background: var(--ink); color: var(--page);
+  font: 700 1.2rem "Barlow Condensed", sans-serif;
+  margin-right: .5rem; vertical-align: .15em;
+}
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- hero ---------- */
+.hero { padding: 48px 0 24px; }
+.subtitle { font: 600 clamp(1.15rem, 3vw, 1.5rem)/1.3 "Barlow Condensed", sans-serif; color: var(--ink-2); margin: -.2em 0 0; letter-spacing: .01em; }
+.ecg { width: 100%; height: 70px; display: block; margin: 8px 0 20px; }
+.ecg path { fill: none; stroke: var(--dot-you); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 1.6s ease-out .2s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .ecg path { animation: none; stroke-dashoffset: 0; } }
+
+/* ---------- the zone ruler (used in several places) ---------- */
+.ruler { margin: 18px 0 8px; }
+.ruler-track { position: relative; height: 54px; border-radius: 8px; overflow: hidden; display: flex; }
+.ruler-track > div { height: 100%; display: flex; align-items: center; justify-content: center;
+  font: 700 1.05rem "Barlow Condensed", sans-serif; color: var(--ink); }
+.ruler .short, .ruler-track .short { display: none; }
+@media (max-width: 560px) { .ruler-track .full { display: none; } .ruler-track .short { display: inline; } }
+.z-light { background: var(--zone-light); }
+.z-mod { background: var(--zone-mod); }
+.z-vig { background: var(--zone-vig); }
+.ruler-ticks { position: relative; height: 22px; font-size: .8rem; color: var(--muted); }
+.ruler-ticks span { position: absolute; transform: translateX(-50%); top: 2px; font-variant-numeric: tabular-nums; }
+.ruler-marker { position: absolute; top: 24px; height: 66px; width: 4px; margin-left: -2px; background: var(--dot-you);
+  border-radius: 2px; box-shadow: 0 0 0 2px var(--surface); transition: left .5s ease; }
+.ruler-marker::after { content: attr(data-label); position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font: 700 .95rem "Atkinson Hyperlegible", sans-serif; color: var(--ink); }
+.ruler-wrap { position: relative; padding-top: 30px; margin-top: 10px; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 22px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+.fact b { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.fact p { margin: 0; color: var(--ink-2); font-size: 1rem; }
+
+ul.tight { margin: 0 0 1em; padding-left: 1.2em; }
+ul.tight li { margin-bottom: .3em; }
+.safety { border-left: 4px solid var(--dot-you); padding: 4px 0 4px 16px; margin-top: 18px; }
+
+/* ---------- logging card ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+.field { margin-bottom: 22px; }
+.field-label { display: block; font-weight: 700; margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { appearance: none; border: 2px solid var(--line); background: var(--surface); color: var(--ink);
+  font: inherit; font-size: 1rem; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { border-color: var(--action); background: var(--action); color: var(--action-ink); }
+.chip .tick { margin-left: 6px; }
+.howto { background: var(--page); border-radius: 8px; padding: 12px 14px; color: var(--ink-2); font-size: 1rem; margin-top: 10px; }
+.howto:empty { display: none; }
+input[type="number"], textarea {
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 2px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; max-width: 220px;
+}
+textarea { max-width: none; min-height: 120px; resize: vertical; }
+input[type="number"]:focus, textarea:focus { border-color: var(--action); outline: none; }
+.btn { appearance: none; border: 0; background: var(--action); color: var(--action-ink);
+  font: 700 1.05rem "Atkinson Hyperlegible", sans-serif; padding: 12px 22px; border-radius: 8px; cursor: pointer; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-quiet { background: transparent; color: var(--action); border: 2px solid var(--action); }
+.error { color: #c42b2b; font-size: .95rem; margin-top: 6px; min-height: 1.2em; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .error { color: #f08585; } }
+
+.result { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.result[hidden] { display: none; }
+.verdict { font-size: 1.25rem; margin: 0 0 4px; }
+.verdict strong { font-family: "Barlow Condensed", sans-serif; font-size: 1.6rem; }
+.progress { margin-top: 14px; color: var(--ink-2); font-size: .98rem; }
+
+/* ---------- class chart ---------- */
+.chart-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; margin-bottom: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: .95rem; color: var(--ink-2); margin: 8px 0 4px; }
+.legend i { display: inline-block; vertical-align: -1px; margin-right: 6px; }
+.lg-class { width: 10px; height: 10px; border-radius: 50%; background: var(--dot-class); }
+.lg-avg { width: 4px; height: 16px; background: var(--ink); border-radius: 2px; vertical-align: -3px !important; }
+.lg-you { width: 12px; height: 12px; border-radius: 50%; background: var(--dot-you); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--dot-you); }
+.chart { width: 100%; overflow: visible; }
+.chart text { fill: var(--ink-2); font-family: "Atkinson Hyperlegible", sans-serif; }
+.chart .row-label { fill: var(--ink); font-size: 17px; }
+.chart .zone-label { fill: var(--ink); font: 700 19px "Barlow Condensed", sans-serif; }
+.data-note { font-size: .92rem; color: var(--muted); margin-top: 6px; }
+.tooltip { position: fixed; pointer-events: none; background: var(--ink); color: var(--page); padding: 6px 10px;
+  border-radius: 6px; font-size: .9rem; white-space: nowrap; z-index: 10; }
+.tooltip[hidden] { display: none; }
+details { margin-top: 16px; }
+.numbers table { max-width: 760px; }
+@media (min-width: 1500px) { #panel-class .numbers { font-size: 1.2rem; } }
+summary { cursor: pointer; color: var(--action); font-weight: 700; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.talk { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; margin-top: 22px; }
+.talk ol { margin: 0; padding-left: 1.3em; }
+.talk li { margin-bottom: .5em; }
+
+footer { padding: 30px 0 50px; color: var(--muted); font-size: .9rem; }
+footer p { margin: 0 0 .4em; max-width: 80ch; }
+footer summary { font-size: .9rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     TOP BAR – site name and the two tabs
+     ========================================================= -->
+<header class="topbar">
+  <div class="wrap wrap-wide topbar-inner">
+    <div class="brand">60 minutes a day</div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-activity" aria-controls="panel-activity" aria-selected="true">Activity</button>
+      <button class="tab" role="tab" id="tab-class" aria-controls="panel-class" aria-selected="false" tabindex="-1">Class results</button>
+    </div>
+  </div>
+</header>
+
+<!-- =========================================================
+     TAB 1: ACTIVITY
+     ========================================================= -->
+<main class="wrap" role="tabpanel" id="panel-activity" aria-labelledby="tab-activity">
+
+  <!-- =========================================================
+       1. INTRO – what moderate and vigorous mean
+       ========================================================= -->
+  <section class="hero" aria-labelledby="title">
+    <h1 id="title">60 minutes a day</h1>
+    <p class="subtitle">Australia's physical activity guidelines for young people</p>
+    <svg class="ecg" viewBox="0 0 800 70" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40 H180 L200 40 L215 10 L232 62 L248 30 L262 40 H430 L450 40 L465 6 L482 66 L498 26 L512 40 H800"/>
+    </svg>
+    <p class="lead">You need <strong>at least 60 minutes of moderate to vigorous activity</strong> every day, and it can be split up across the day. Does what you do count? Your heart rate will tell you.</p>
+
+    <div class="ruler-wrap" aria-hidden="true">
+      <div class="ruler-track" id="introRuler"></div>
+      <div class="ruler-ticks" id="introTicks"></div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><b>Light</b><p>Easy. Still good for you (aim for a few hours a day), but it doesn't count towards your 60 minutes.</p></div>
+      <div class="fact"><b>Moderate</b><p>You can talk, but you can't sing.</p></div>
+      <div class="fact"><b>Vigorous</b><p>You can only say a few words at a time. Aim for this on at least 3 days a week.</p></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       2. HOW TO TAKE YOUR PULSE + SAFETY
+       ========================================================= -->
+  <section aria-labelledby="pulse">
+    <h2 id="pulse">Taking your pulse</h2>
+    <ul class="tight">
+      <li>Put two fingers (not your thumb) on the inside of your wrist, or beside your windpipe under your jaw.</li>
+      <li>Count the beats for <strong>15 seconds</strong>, then <strong>× 4</strong>. That's your beats per minute (bpm).</li>
+      <li>Count <strong>straight away</strong> when you stop. Your heart starts slowing down the second you finish.</li>
+      <li>Rest for 1–2 minutes between movements so your heart rate settles.</li>
+    </ul>
+    <div class="safety">
+      <strong>Stay safe:</strong> warm up with your teacher first. Stop and tell your teacher if you feel dizzy, sick or have chest pain. If you have asthma or a heart condition, check with your teacher before you start.
+    </div>
+  </section>
+
+  <!-- =========================================================
+       3. LOG A MOVEMENT
+       ========================================================= -->
+  <section aria-labelledby="log">
+    <h2 id="log"><span class="step-no">1</span>Guess it, do it, log it</h2>
+    <p class="lead">Do this for each movement your group tries.</p>
+
+    <div class="card">
+      <div class="field">
+        <span class="field-label" id="mvLabel">Which movement?</span>
+        <div class="chips" role="group" aria-labelledby="mvLabel" id="movementChips"></div>
+        <div class="howto" id="howto" aria-live="polite"></div>
+      </div>
+
+      <div class="field">
+        <span class="field-label" id="guessLabel">Before you start: what do you think it will be?</span>
+        <div class="chips" role="group" aria-labelledby="guessLabel" id="guessChips"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="hr">Your heart rate straight after (bpm)</label>
+        <input type="number" id="hr" inputmode="numeric" min="40" max="220" step="1" placeholder="e.g. 140">
+        <div class="error" id="err" role="alert"></div>
+      </div>
+
+      <button class="btn" id="saveBtn">Save my result</button>
+
+      <div class="result" id="result" hidden aria-live="polite">
+        <p class="verdict" id="verdict"></p>
+        <p id="verdict2" style="color:var(--ink-2)"></p>
+        <div class="ruler-wrap">
+          <div class="ruler-track" id="resultRuler"></div>
+          <div class="ruler-ticks" id="resultTicks"></div>
+        </div>
+      </div>
+      <p class="progress" id="progress"></p>
+      <button class="btn btn-quiet next-link" id="toClassBtn" hidden>See the class results</button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       5. YOUR 60 MINUTES
+       ========================================================= -->
+  <section aria-labelledby="plan">
+    <h2 id="plan"><span class="step-no">2</span>Your 60 minutes</h2>
+    <p class="lead">After you've looked at the class results, pick activities you'd actually enjoy that would get you to moderate or vigorous. Then explain how you could fit 60 minutes into your day.</p>
+    <div class="card">
+      <div class="field">
+        <span class="field-label" id="actLabel">Activities I would enjoy</span>
+        <div class="chips" role="group" aria-labelledby="actLabel" id="activityChips"></div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="planText">Why did you pick them, and how could you fit 60 minutes into your day?</label>
+        <textarea id="planText" placeholder="I picked … because … I could do … before school and … after school."></textarea>
+        <div class="error" id="planErr" role="alert"></div>
+      </div>
+      <button class="btn" id="planBtn">Send my plan</button>
+      <p class="progress" id="planDone" aria-live="polite"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- =========================================================
+     TAB 2: CLASS RESULTS (wider, so the chart is bigger)
+     ========================================================= -->
+<main class="wrap wrap-wide" role="tabpanel" id="panel-class" aria-labelledby="tab-class" hidden>
+
+  <!-- =========================================================
+       4. CLASS RESULTS
+       ========================================================= -->
+  <section aria-labelledby="class">
+    <div class="chart-head">
+      <h2 id="class" style="margin:0">Did the class get there?</h2>
+      <button class="btn btn-quiet" id="refreshBtn">Refresh class data</button>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span><i class="lg-class"></i>Classmate</span>
+      <span><i class="lg-avg"></i>Class average</span>
+      <span><i class="lg-you"></i>You</span>
+    </div>
+    <svg class="chart" id="chart" role="img" aria-labelledby="chartTitle chartDesc">
+      <title id="chartTitle">Class heart rates for each movement</title>
+      <desc id="chartDesc">Dots show each student's heart rate against shaded light, moderate and vigorous zones. The same numbers are in the Show the numbers table below the chart.</desc>
+    </svg>
+    <p class="data-note" id="dataNote"></p>
+
+    <details class="numbers">
+      <summary>Show the numbers</summary>
+      <table>
+        <thead><tr><th>Movement</th><th class="num">Class average (bpm)</th><th>Zone</th><th class="num">Reached moderate or vigorous</th></tr></thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </details>
+
+  </section>
+
+
+</main>
+
+<footer class="wrap wrap-wide">
+  <p>Heart rate zones are estimates for 13-year-olds.</p>
+  <details>
+    <summary>For teachers</summary>
+    <p><strong>Guidelines:</strong> Australian 24-Hour Movement Guidelines for Children and Young People (5–17 years), Australian Government Department of Health. Physical activity: at least 60 minutes of moderate to vigorous activity a day (more is better, and it can be accumulated); vigorous activities and muscle- and bone-strengthening activities on at least 3 days a week; several hours of light activity a day.</p>
+    <p><strong>Heart rate zones and talk test:</strong> not part of the Australian guidelines, which only describe moderate to vigorous activity as activity "that makes the heart beat faster". Zones use the US CDC target heart rate method: estimated maximum heart rate = 220 − age (207 bpm at age 13); moderate ≈ 64–76% (132–158 bpm), vigorous ≈ 77–93% (159–193 bpm). The talk test (talk but not sing = moderate; only a few words = vigorous) is also from the CDC. 220 − age is a rough estimate, especially for young people, so treat the zones as a guide.</p>
+  </details>
+</footer>
+
+<div class="tooltip" id="tip" hidden></div>
+
+<script>
+/* ============================================================
+   SETTINGS – the main things you might want to change
+   ============================================================ */
+const CONFIG = {
+  AGE: 13,   // used to work out the zones (220 − age)
+
+  // Google Form that collects the data (don't change unless you make a new form)
+  FORM_ACTION: "https://docs.google.com/forms/d/e/1FAIpQLSeLSmEYiX2qFTUHWNjVuLdbXf9D8Ehj7sPqg2_o9nyV0mm0cg/formResponse",
+  FIELDS: {
+    movement: "entry.2069466875",
+    guess:    "entry.315341670",
+    hr:       "entry.170914074",
+    enjoy:    "entry.200478283",
+    plan:     "entry.558498471"
+  },
+
+  // Published CSV of the "Class data" tab. Leave empty to show practice data only.
+  CLASS_DATA_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxfw9Drqor4u2aHYqTDmj8W6vRX4XMitsmFcREDZaPOq3bPGscl5nwHGtStlEhI0YPof5aqbV0eiOH/pub?gid=2042040649&single=true&output=csv",
+
+  // Include the 25 practice students in the class chart (so it never looks empty)
+  INCLUDE_SAMPLE: true
+};
+
+const MOVEMENTS = [
+  { name: "Resting",         how: "Sit still for 1 minute, then count." },
+  { name: "Walking",         how: "Walk at your normal pace for 1 minute, then count." },
+  { name: "Jogging",         how: "Jog at an easy pace (you could still chat) for 1 minute, then count." },
+  { name: "Sprinting",       how: "Sprint shuttles between two cones for 30 seconds, then count." },
+  { name: "Passing a footy", how: "Pass a footy with a partner for 1 minute, then count." },
+  { name: "Skipping",        how: "Skip with a rope for 1 minute, then count." },
+  { name: "Star jumps",      how: "Do star jumps at a steady pace for 1 minute, then count." }
+];
+
+const ACTIVITIES = ["Jogging", "Cycling", "Swimming", "Skipping", "Dancing", "Basketball", "Soccer", "Footy",
+  "Netball", "Tennis", "Skateboarding", "Martial arts", "Brisk walking the dog", "Gym or circuits"];
+
+/* Practice data: 25 made-up Year 8 students (L = light, M = moderate, V = vigorous guesses) */
+const SAMPLE = {"Resting":{"hr":[88,88,68,64,80,88,80,68,76,92,68,88,84,84,88,76,80,96,76,76,68,76,84,88,84],"guess":"LLMLMLLLLLLLLLLLLLLLLLLLL"},"Walking":{"hr":[112,120,108,112,112,112,112,100,92,92,108,92,108,112,112,104,124,108,104,112,116,104,104,96,80],"guess":"MLMMLLLMMLLLLMMLMLLLLLLML"},"Jogging":{"hr":[148,164,156,140,148,136,132,140,164,140,124,144,140,156,160,144,148,136,160,136,148,172,136,148,144],"guess":"MMMMMMMVMMMMMMVMMMMMMVMML"},"Sprinting":{"hr":[180,168,180,152,180,180,172,168,156,172,176,184,168,196,172,188,156,192,184,176,180,168,184,188,176],"guess":"VVVVVVVVMVVVVVVVVVVMVVVVV"},"Passing a footy":{"hr":[88,108,88,120,124,116,92,104,96,120,124,108,112,116,120,100,100,120,120,116,112,120,116,104,132],"guess":"MLMMMMMLMMMLLMLMMMLMMLLML"},"Skipping":{"hr":[180,172,160,180,156,176,176,160,152,160,156,172,164,168,164,160,164,176,176,176,160,156,172,156,160],"guess":"MVMMVVMLMVMMVMVMMMMVMVVMV"},"Star jumps":{"hr":[160,148,152,152,140,152,148,168,176,176,144,140,176,168,172,168,160,184,168,168,148,160,176,164,168],"guess":"VMMMVVVMMMMMMMVVVVMMVMMVV"}};
+
+/* ============================================================
+   ZONES
+   ============================================================ */
+const MAX_HR = 220 - CONFIG.AGE;
+const MOD_MIN = Math.round(MAX_HR * 0.64);
+const VIG_MIN = Math.round(MAX_HR * 0.77);
+const VIG_MAX = Math.round(MAX_HR * 0.93);
+const SCALE_MIN = 50, SCALE_MAX = 210;
+const ZONES = { L: "Light", M: "Moderate", V: "Vigorous" };
+function zoneOf(hr) { return hr < MOD_MIN ? "L" : hr < VIG_MIN ? "M" : "V"; }
+const pct = hr => (hr - SCALE_MIN) / (SCALE_MAX - SCALE_MIN) * 100;
+
+/* ============================================================
+   SAFE LOCAL STORAGE (remembers your own results on this device)
+   ============================================================ */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let mine = store.get("mov-mine", []);      // [{movement, guess, hr}]
+let planSent = store.get("mov-plan", false);
+
+/* ============================================================
+   BUILD THE PAGE
+   ============================================================ */
+const $ = id => document.getElementById(id);
+
+function buildRuler(trackId, ticksId) {
+  const t = $(trackId);
+  t.innerHTML = "";
+  [["z-light", SCALE_MIN, MOD_MIN, "Light"], ["z-mod", MOD_MIN, VIG_MIN, "Moderate"], ["z-vig", VIG_MIN, SCALE_MAX, "Vigorous"]]
+    .forEach(([cls, a, b, label]) => {
+      const d = document.createElement("div");
+      d.className = cls; d.style.width = (pct(b) - pct(a)) + "%";
+      d.innerHTML = `<span class="full">${label}</span><span class="short">${label === "Light" ? label : label.slice(0, 3) + "."}</span>`;
+      t.appendChild(d);
+    });
+  const ticks = $(ticksId);
+  ticks.innerHTML = "";
+  [60, 100, MOD_MIN, VIG_MIN, 200].forEach(v => {
+    const s = document.createElement("span"); s.style.left = pct(v) + "%"; s.textContent = v; ticks.appendChild(s);
+  });
+}
+buildRuler("introRuler", "introTicks");
+buildRuler("resultRuler", "resultTicks");
+
+
+let chosenMovement = null, chosenGuess = null;
+function makeChips(containerId, items, onPick, multi) {
+  const c = $(containerId);
+  items.forEach(label => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = label; b.setAttribute("aria-pressed", "false");
+    b.dataset.value = label;
+    b.addEventListener("click", () => {
+      if (!multi) c.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", "false"));
+      const on = multi ? b.getAttribute("aria-pressed") !== "true" : true;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      onPick(label, on);
+    });
+    c.appendChild(b);
+  });
+}
+makeChips("movementChips", MOVEMENTS.map(m => m.name), name => {
+  chosenMovement = name;
+  $("howto").textContent = MOVEMENTS.find(m => m.name === name).how;
+  $("err").textContent = "";
+});
+makeChips("guessChips", ["Light", "Moderate", "Vigorous"], g => { chosenGuess = g; $("err").textContent = ""; });
+const enjoyed = new Set();
+makeChips("activityChips", ACTIVITIES, (a, on) => { on ? enjoyed.add(a) : enjoyed.delete(a); }, true);
+
+function updateProgress() {
+  const done = new Set(mine.map(r => r.movement));
+  $("movementChips").querySelectorAll(".chip").forEach(b => {
+    const has = done.has(b.dataset.value);
+    b.innerHTML = b.dataset.value + (has ? '<span class="tick" aria-label="done">✓</span>' : "");
+  });
+  $("toClassBtn").hidden = !done.size;
+  $("progress").textContent = done.size ? `You've logged ${done.size} of ${MOVEMENTS.length} movements.` : "";
+}
+
+/* ============================================================
+   SEND TO THE GOOGLE FORM
+   ============================================================ */
+function sendToForm(fields) {
+  const body = new URLSearchParams();
+  Object.entries(fields).forEach(([k, v]) => body.append(CONFIG.FIELDS[k], v));
+  // no-cors: Google doesn't let us read the reply, so we assume it worked if the network is up
+  return fetch(CONFIG.FORM_ACTION, { method: "POST", mode: "no-cors", body }).then(() => true).catch(() => false);
+}
+
+/* ---------- save one movement ---------- */
+$("saveBtn").addEventListener("click", async () => {
+  const hr = Number($("hr").value);
+  if (!chosenMovement) return ($("err").textContent = "Pick which movement you did.");
+  if (!chosenGuess) return ($("err").textContent = "Pick your guess: light, moderate or vigorous.");
+  if (!Number.isInteger(hr) || hr < 40 || hr > 220) return ($("err").textContent = "Check your count. It should be a whole number between 40 and 220.");
+  $("err").textContent = "";
+
+  $("saveBtn").disabled = true; $("saveBtn").textContent = "Saving…";
+  const ok = await sendToForm({ movement: chosenMovement, guess: chosenGuess, hr: String(hr) });
+  $("saveBtn").disabled = false; $("saveBtn").textContent = "Save my result";
+
+  const z = zoneOf(hr);
+  const right = ZONES[z] === chosenGuess;
+  mine.push({ movement: chosenMovement, guess: chosenGuess[0], hr, pending: true });
+  store.set("mov-mine", mine);
+
+  $("result").hidden = false;
+  $("verdict").innerHTML = `${chosenMovement}: ${hr} bpm is <strong>${ZONES[z]}</strong>`;
+  $("verdict2").textContent = (right ? `You guessed ${chosenGuess.toLowerCase()}. Spot on!` : `You guessed ${chosenGuess.toLowerCase()}. Not quite. What made it ${ZONES[z].toLowerCase()}?`)
+    + (ok ? "" : " (Couldn't reach the class data right now, but your result is saved on this device.)");
+  const track = $("resultRuler");
+  track.parentElement.querySelectorAll(".ruler-marker").forEach(m => m.remove());
+  const mk = document.createElement("div");
+  mk.className = "ruler-marker"; mk.dataset.label = hr + " bpm"; mk.style.left = "0%";
+  track.parentElement.appendChild(mk);
+  requestAnimationFrame(() => requestAnimationFrame(() => { mk.style.left = pct(hr) + "%"; }));
+
+  // reset for the next movement
+  $("hr").value = ""; chosenGuess = null;
+  $("guessChips").querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", "false"));
+  updateProgress();
+  drawChart();
+});
+
+/* ---------- send plan ---------- */
+$("planBtn").addEventListener("click", async () => {
+  const text = $("planText").value.trim();
+  if (!enjoyed.size) return ($("planErr").textContent = "Pick at least one activity you'd enjoy.");
+  if (text.length < 15) return ($("planErr").textContent = "Write a sentence or two about why and how.");
+  $("planErr").textContent = "";
+  $("planBtn").disabled = true; $("planBtn").textContent = "Sending…";
+  const ok = await sendToForm({ enjoy: [...enjoyed].join(", "), plan: text });
+  $("planBtn").textContent = "Send my plan";
+  $("planBtn").disabled = false;
+  $("planDone").textContent = ok ? "Sent to your teacher. Nice work." : "Couldn't send right now. Check you're online and try again.";
+  if (ok) { planSent = true; store.set("mov-plan", true); }
+});
+
+/* ============================================================
+   CLASS DATA
+   ============================================================ */
+let live = [];           // rows from the Google Sheet [{movement, guess, hr}]
+let liveLoaded = false;
+
+function parseCSV(text) {
+  return text.trim().split(/\r?\n/).slice(1).map(line => {
+    const cells = line.match(/("([^"]|"")*"|[^,]*)(,|$)/g).map(c => c.replace(/,$/, "").replace(/^"|"$/g, "").replace(/""/g, '"'));
+    return { movement: cells[0], guess: (cells[1] || "").charAt(0), hr: Number(cells[2]) };
+  }).filter(r => MOVEMENTS.some(m => m.name === r.movement) && r.hr >= 40 && r.hr <= 220);
+}
+
+async function loadLive() {
+  if (!CONFIG.CLASS_DATA_CSV) { liveLoaded = false; return; }
+  try {
+    const res = await fetch(CONFIG.CLASS_DATA_CSV + (CONFIG.CLASS_DATA_CSV.includes("?") ? "&" : "?") + "t=" + Date.now());
+    live = parseCSV(await res.text());
+    liveLoaded = true;
+    // once the sheet has caught up, stop double-counting your own results
+    const counted = {};
+    live.forEach(r => { const k = r.movement + "|" + r.hr; counted[k] = (counted[k] || 0) + 1; });
+    mine.forEach(r => { const k = r.movement + "|" + r.hr; if (r.pending && counted[k]) { r.pending = false; counted[k]--; } });
+    store.set("mov-mine", mine);
+  } catch (e) { liveLoaded = false; }
+}
+
+function allRows() {
+  const rows = [];
+  if (CONFIG.INCLUDE_SAMPLE) Object.entries(SAMPLE).forEach(([m, d]) => d.hr.forEach((hr, i) => rows.push({ movement: m, guess: d.guess[i], hr })));
+  live.forEach(r => rows.push(r));
+  mine.filter(r => r.pending || !liveLoaded).forEach(r => rows.push({ movement: r.movement, guess: r.guess, hr: r.hr }));
+  return rows;
+}
+
+/* ============================================================
+   DRAW THE CHART (plain SVG, no library)
+   ============================================================ */
+const tip = $("tip");
+function showTip(e, text) { tip.textContent = text; tip.hidden = false; moveTip(e); }
+function moveTip(e) {
+  const x = (e.clientX ?? 0), y = (e.clientY ?? 0);
+  tip.style.left = Math.min(x + 12, window.innerWidth - tip.offsetWidth - 8) + "px";
+  tip.style.top = (y - 36) + "px";
+}
+function hideTip() { tip.hidden = true; }
+
+function drawChart() {
+  const svg = $("chart");
+  const W = svg.clientWidth || 800;
+  const narrow = W < 560;
+  // k = how much to scale everything up on big screens like a smartboard (1 = normal)
+  const k = narrow ? 1 : Math.min(1.7, Math.max(1, W / 1050));
+  const left = narrow ? 84 : Math.round(170 * k), right = 16, top = Math.round(40 * k), bottom = Math.round(40 * k);
+  const fitRow = (window.innerHeight - (k > 1.2 ? 380 : 260)) / MOVEMENTS.length;   // keep the whole chart on one screen
+  const rowH = narrow ? 50 : Math.round(Math.max(56, Math.min(72 * k, fitRow)));
+  const H = top + rowH * MOVEMENTS.length + bottom;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("height", H);
+  [...svg.querySelectorAll(":scope > :not(title):not(desc)")].forEach(n => n.remove());
+  const plotW = W - left - right;
+  const x = hr => left + (hr - SCALE_MIN) / (SCALE_MAX - SCALE_MIN) * plotW;
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent = svg) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); parent.appendChild(n); return n; };
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  // zone bands
+  [[SCALE_MIN, MOD_MIN, "--zone-light", "Light"], [MOD_MIN, VIG_MIN, "--zone-mod", "Moderate"], [VIG_MIN, SCALE_MAX, "--zone-vig", "Vigorous"]]
+    .forEach(([a, b, c, label]) => {
+      el("rect", { x: x(a), y: top - 6, width: x(b) - x(a), height: rowH * MOVEMENTS.length + 6, fill: css(c) });
+      const short = { Light: "Light", Moderate: "Mod.", Vigorous: "Vig." };
+      el("text", { x: (x(a) + x(b)) / 2, y: top - 14, "text-anchor": "middle", class: "zone-label", style: `font-size:${Math.round(19 * k)}px` }).textContent = narrow ? short[label] : label;
+    });
+
+  // x-axis ticks
+  [60, 100, MOD_MIN, VIG_MIN, 200].forEach(v => {
+    const edge = v === MOD_MIN || v === VIG_MIN;
+    const t = el("text", { x: x(v), y: H - 12, "text-anchor": "middle", "font-size": narrow ? 13 : Math.round(15 * k), "font-weight": edge ? 700 : 400 }); t.textContent = v;
+  });
+  el("text", { x: left - 10, y: H - 12, "text-anchor": "end", "font-size": narrow ? 12 : Math.round(14 * k) }).textContent = "bpm";
+
+  const rows = allRows();
+  const byMove = {};
+  MOVEMENTS.forEach(m => byMove[m.name] = []);
+  rows.forEach(r => byMove[r.movement] && byMove[r.movement].push(r));
+  const tbody = $("tableBody"); if (tbody) tbody.innerHTML = "";
+
+  MOVEMENTS.forEach((m, i) => {
+    const cy = top + rowH * i + rowH / 2;
+    const list = byMove[m.name];
+    el("line", { x1: left, x2: left + plotW, y1: top + rowH * (i + 1), y2: top + rowH * (i + 1), stroke: css("--surface"), "stroke-width": 2 });
+    const lbl = el("text", { x: left - 12, y: cy + 6 * k, "text-anchor": "end", class: "row-label", style: narrow ? "" : `font-size:${Math.round(17 * k)}px` });
+    const words = m.name.split(" ");
+    if (narrow && words.length > 1 && m.name.length > 10) {
+      const mid = Math.ceil(words.length / 2);
+      [words.slice(0, mid).join(" "), words.slice(mid).join(" ")].forEach((line, k) => {
+        const ts = document.createElementNS(NS, "tspan");
+        ts.setAttribute("x", left - 10); ts.setAttribute("dy", k === 0 ? "-0.55em" : "1.15em");
+        ts.textContent = line; lbl.appendChild(ts);
+      });
+    } else lbl.textContent = m.name;
+
+    // class dots, with a little vertical jitter so they don't sit on top of each other
+    list.forEach((r, j) => {
+      const jitter = ((j * 37) % 11 - 5) * (rowH / 30);
+      el("circle", { cx: x(r.hr), cy: cy + jitter, r: narrow ? 4 : 5.5 * k, fill: css("--dot-class") });
+    });
+
+    if (list.length) {
+      const avg = Math.round(list.reduce((s, r) => s + r.hr, 0) / list.length);
+      const hit = Math.round(100 * list.filter(r => zoneOf(r.hr) !== "L").length / list.length);
+      const guessed = list.filter(r => r.guess);
+      const rightPct = guessed.length ? Math.round(100 * guessed.filter(r => r.guess === zoneOf(r.hr)).length / guessed.length) : null;
+      const bar = el("rect", { x: x(avg) - 2 * k, y: cy - rowH * 0.36, width: 4 * k, height: rowH * 0.72, rx: 2, fill: css("--ink") });
+      // 2. the class average number, next to the average line
+      el("text", { x: x(avg) + 7 * k, y: cy - rowH * 0.36 + (narrow ? 9 : 12 * k), "font-size": narrow ? 12 : Math.round(15 * k), "font-weight": 700,
+        fill: css("--ink"), stroke: css("--surface"), "stroke-width": 4, "paint-order": "stroke", "stroke-linejoin": "round" }).textContent = avg;
+      const hitArea = el("rect", { x: x(avg) - 10, y: cy - rowH / 2, width: 20, height: rowH, fill: "transparent", tabindex: 0 });
+      const label = `${m.name}: class average ${avg} bpm (${ZONES[zoneOf(avg)].toLowerCase()})`;
+      hitArea.setAttribute("aria-label", label);
+      ["mouseenter", "focus"].forEach(ev => hitArea.addEventListener(ev, e => showTip(e.clientX ? e : { clientX: bar.getBoundingClientRect().x, clientY: bar.getBoundingClientRect().y }, label)));
+      hitArea.addEventListener("mousemove", moveTip);
+      ["mouseleave", "blur"].forEach(ev => hitArea.addEventListener(ev, hideTip));
+
+      if (tbody) tbody.insertAdjacentHTML("beforeend",
+        `<tr><td>${m.name}</td><td class="num">${avg}</td><td>${ZONES[zoneOf(avg)]}</td><td class="num">${hit}%</td></tr>`);
+    }
+
+    // your own results on top
+    mine.filter(r => r.movement === m.name).forEach(r => {
+      const c = el("circle", { cx: x(r.hr), cy, r: narrow ? 7 : 9 * k, fill: css("--dot-you"), stroke: css("--surface"), "stroke-width": 2, tabindex: 0 });
+      const label = `You: ${m.name}, ${r.hr} bpm (${ZONES[zoneOf(r.hr)].toLowerCase()})`;
+      c.setAttribute("aria-label", label);
+      ["mouseenter", "focus"].forEach(ev => c.addEventListener(ev, e => showTip(e.clientX ? e : { clientX: c.getBoundingClientRect().x, clientY: c.getBoundingClientRect().y }, label)));
+      c.addEventListener("mousemove", moveTip);
+      ["mouseleave", "blur"].forEach(ev => c.addEventListener(ev, hideTip));
+    });
+  });
+
+  const liveCount = live.length;
+  $("dataNote").textContent = CONFIG.CLASS_DATA_CSV
+    ? (liveLoaded ? `Showing ${liveCount} class result${liveCount === 1 ? "" : "s"}` + (CONFIG.INCLUDE_SAMPLE ? " plus 25 practice students." : ".") + " New results can take a few minutes to appear, so press Refresh."
+                  : "Couldn't load the class data right now. Showing practice data.")
+    : "Showing practice data from 25 made-up students, plus any results you log on this device.";
+}
+
+$("refreshBtn").addEventListener("click", async () => {
+  $("refreshBtn").disabled = true; $("refreshBtn").textContent = "Refreshing…";
+  await loadLive(); drawChart();
+  $("refreshBtn").disabled = false; $("refreshBtn").textContent = "Refresh class data";
+});
+
+let resizeTimer;
+window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(drawChart, 150); });
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", drawChart);
+
+/* ============================================================
+   TABS
+   ============================================================ */
+const TABS = { activity: ["tab-activity", "panel-activity"], class: ["tab-class", "panel-class"] };
+function showTab(name, focus) {
+  Object.entries(TABS).forEach(([key, [tabId, panelId]]) => {
+    const on = key === name;
+    $(tabId).setAttribute("aria-selected", on ? "true" : "false");
+    $(tabId).tabIndex = on ? 0 : -1;
+    $(panelId).hidden = !on;
+  });
+  if (focus) $(TABS[name][0]).focus();
+  if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  window.scrollTo(0, 0);
+  if (name === "class") { drawChart(); loadLive().then(drawChart); }
+}
+$("tab-activity").addEventListener("click", () => showTab("activity"));
+$("tab-class").addEventListener("click", () => showTab("class"));
+document.querySelector('[role="tablist"]').addEventListener("keydown", e => {
+  if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+    showTab($("tab-activity").getAttribute("aria-selected") === "true" ? "class" : "activity", true);
+  }
+});
+$("toClassBtn").addEventListener("click", () => showTab("class"));
+showTab(location.hash === "#class" ? "class" : "activity");
+
+if (planSent) $("planDone").textContent = "You've already sent a plan from this device. You can send another if you change your mind.";
+updateProgress();
+loadLive().then(drawChart);
+drawChart();
+</script>
+</body>
+</html>
