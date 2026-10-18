@@ -199,6 +199,11 @@ input[type="number"]:focus, textarea:focus { border-color: var(--action); outlin
   border-radius: 6px; font-size: .9rem; white-space: nowrap; z-index: 10; }
 .tooltip[hidden] { display: none; }
 details { margin-top: 16px; }
+.maxhr { margin: 4px 0 4px; }
+.maxhr-body { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-top: 10px; max-width: 62ch; }
+.maxhr-body p { margin: 0 0 .6em; }
+.maxhr-body ul { margin-bottom: .6em; }
+.maxhr-warn { color: var(--ink-2); font-size: .95rem; margin: 0 !important; }
 .numbers table { max-width: 760px; }
 @media (min-width: 1500px) { #panel-class .numbers { font-size: 1.2rem; } }
 summary { cursor: pointer; color: var(--action); font-weight: 700; }
@@ -250,6 +255,19 @@ footer summary { font-size: .9rem; }
       <div class="ruler-track" id="introRuler"></div>
       <div class="ruler-ticks" id="introTicks"></div>
     </div>
+
+    <details class="maxhr">
+      <summary>Where do these numbers come from?</summary>
+      <div class="maxhr-body">
+        <p>Your <strong>maximum heart rate</strong> is roughly <strong>220 minus your age</strong>.<br>
+        For a 13-year-old: 220 − 13 = <strong>207 bpm</strong>.</p>
+        <ul class="tight">
+          <li><strong>Moderate</strong> is about 64–76% of that (roughly ⅔ to ¾): <strong>132–158 bpm</strong></li>
+          <li><strong>Vigorous</strong> is about 77% or more (over ¾): <strong>159 bpm and up</strong></li>
+        </ul>
+        <p class="maxhr-warn">This is only an estimate. Never try to reach your maximum heart rate.</p>
+      </div>
+    </details>
 
     <div class="facts">
       <div class="fact"><b>Light</b><p>Easy. Still good for you (aim for a few hours a day), but it doesn't count towards your 60 minutes.</p></div>
